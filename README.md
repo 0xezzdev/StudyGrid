@@ -1,4 +1,4 @@
-# study_core
+# study_grid
 
 A new Flutter project.
 
