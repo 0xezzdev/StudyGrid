@@ -1,4 +1,4 @@
-package com.example.study_core
+package com.nti.study_grid
 
 import io.flutter.embedding.android.FlutterActivity
 
