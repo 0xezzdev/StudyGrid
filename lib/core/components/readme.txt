@@ -1,0 +1,1 @@
+Here we will add any widget that we will use on more than one page
