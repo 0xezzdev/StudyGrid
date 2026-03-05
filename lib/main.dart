@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/splash_screen/widget/splash_screen.dart';
 
-void main() {
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SupabaseService.init();
+
   runApp(const MyApp());
 }
 
@@ -10,7 +16,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //return splash screen
-    return MaterialApp(home: SplashScreen());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    );
   }
 }
