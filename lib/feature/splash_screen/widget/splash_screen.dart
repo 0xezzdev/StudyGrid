@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
-import 'package:study_grid/feature/screens/sign_in_screen.dart';
+import 'package:study_grid/feature/sign_in/sign_in_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

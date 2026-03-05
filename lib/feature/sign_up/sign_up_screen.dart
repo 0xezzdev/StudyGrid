@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
-import 'home_screen.dart';
+import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
