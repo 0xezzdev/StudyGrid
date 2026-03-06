@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 
 class AddGroupButton extends StatelessWidget {
-  const AddGroupButton({super.key, this.onPressed});
+  const AddGroupButton({super.key, this.onPressed, required this.title, this.heigt=30, this.width=100});
 
   final void Function()? onPressed;
+  final String title;
+  final double heigt;
+  final double width;
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30,
-      width: 100,
+      height: heigt,
+      width: width,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(13),
@@ -19,7 +22,7 @@ class AddGroupButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
         onPressed: onPressed,
         child: Text(
-          "Add Group",
+          title,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,

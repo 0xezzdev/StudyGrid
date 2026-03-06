@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
+import 'package:study_grid/feature/groups_page/groups_page.dart';
 import 'package:study_grid/feature/sign_in/sign_in_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
     try {
       final session = SupabaseService.client.auth.currentSession;
-      _navigateTo(session != null ? const Scaffold(body: Center(child: Text("Home"))) : const SignInScreen());
+      _navigateTo(session != null ? const GroupsPage() : const SignInScreen());
     } catch (e) {
       _navigateTo(const SignInScreen());
     }
