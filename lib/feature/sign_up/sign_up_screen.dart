@@ -3,6 +3,7 @@ import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
+import 'package:study_grid/feature/main_screen/main_screen.dart';
 import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       }
     } catch (e) {
