@@ -16,7 +16,7 @@ class GroupsPageAppbar extends StatelessWidget {
           radius: 20,
           backgroundColor: AppColors.sentMessageMainColor,
           child: Text(
-            "S",
+            "SG",
             style: TextStyle(
               color: AppColors.mainTextColor,
               fontSize: 18,

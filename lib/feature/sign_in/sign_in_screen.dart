@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
+import 'package:study_grid/feature/groups_page/groups_page.dart';
 import '../sign_up/sign_up_screen.dart';
 import '../reset_password/reset_password_screen.dart';
 import '../home/home_screen.dart';
@@ -27,7 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
         password: passwordController.text.trim(),
       );
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GroupsPage()));
       }
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

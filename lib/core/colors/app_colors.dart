@@ -9,7 +9,7 @@ class AppColors {
   static Color yellowColor = Color(0xffEAB308);
   static Color redColor = Color(0xffEF4444);
   static Color orangeColor = Color(0xffF97316);
- static Color cyanColor = const Color(0xFF00E5FF); // أضفناه هنا ليكون كلين
+  static Color cyanColor = const Color(0xFF00E5FF); // أضفناه هنا ليكون كلين
   //text colors
   static Color mainTextColor = Color(0xffF1F5F9);
   static Color subTextColor = Color(0xff94A3B8);
