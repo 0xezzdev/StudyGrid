@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_search_field.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
@@ -175,12 +176,18 @@ class _GroupsPageState extends State<GroupsPage> {
                                                           ScaffoldMessenger.of(
                                                             context,
                                                           ).showSnackBar(
-                                                            const SnackBar(
-                                                              content: Text(
-                                                                "joined successfuly",
-                                                              ),
+                                                            CustomSnackBar(
+                                                              title: 'Success',
+                                                              message:
+                                                                  'You have successfully joined the group',
+                                                              color: AppColors
+                                                                  .greenColor,
+                                                              icon: Icons
+                                                                  .check_circle,
                                                             ),
                                                           );
+                                                          _inviteCodeController
+                                                              .clear();
                                                         } else {
                                                           Navigator.pop(
                                                             context,
@@ -188,15 +195,21 @@ class _GroupsPageState extends State<GroupsPage> {
                                                           Navigator.pop(
                                                             context,
                                                           );
+
                                                           ScaffoldMessenger.of(
                                                             context,
                                                           ).showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                check,
-                                                              ),
+                                                            CustomSnackBar(
+                                                              title: 'Error',
+                                                              message: '$check',
+                                                              color: AppColors
+                                                                  .redColor,
+                                                              icon: Icons
+                                                                  .error_outline,
                                                             ),
                                                           );
+                                                          _inviteCodeController
+                                                              .clear();
                                                         }
                                                       }
                                                     },

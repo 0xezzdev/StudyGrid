@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
 import 'package:study_grid/feature/groups_page/groups_page.dart';
@@ -28,10 +29,23 @@ class _SignInScreenState extends State<SignInScreen> {
         password: passwordController.text.trim(),
       );
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GroupsPage()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const GroupsPage()),
+        );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar(
+            title: 'Error',
+            message:
+                'Failed to sign in. Please check your credentials and try again.',
+            color: AppColors.redColor,
+            icon: Icons.error_outline,
+          ),
+        );
+      }
     }
     if (mounted) setState(() => isLoading = false);
   }
@@ -44,21 +58,40 @@ class _SignInScreenState extends State<SignInScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // لضمان بقاء العنوان على الجنب
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // لضمان بقاء العنوان على الجنب
             children: [
               const SizedBox(height: 50),
               // اللوجو والاسم في النص
               Center(
                 child: Column(
                   children: [
-                    Icon(Icons.grid_view_rounded, color: AppColors.cyanColor, size: 65),
+                    Icon(
+                      Icons.grid_view_rounded,
+                      color: AppColors.cyanColor,
+                      size: 65,
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Study", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: AppColors.purplecolor)),
+                        Text(
+                          "Study",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.purplecolor,
+                          ),
+                        ),
                         const SizedBox(width: 8),
-                        Text("Grid", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: AppColors.cyanColor)),
+                        Text(
+                          "Grid",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.cyanColor,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -66,14 +99,25 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 50),
               // كلمة Sign In على الجنب
-              Text("Sign In", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.mainTextColor)),
+              Text(
+                "Sign In",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.mainTextColor,
+                ),
+              ),
               const SizedBox(height: 10),
               // الجملة الوصفية في النص
               Center(
                 child: Text(
                   "Welcome back! Glad to see you.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: AppColors.subTextColor, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.subTextColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -92,8 +136,16 @@ class _SignInScreenState extends State<SignInScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPasswordScreen())),
-                  child: Text("Forgot Password?", style: TextStyle(color: AppColors.cyanColor)),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ResetPasswordScreen(),
+                    ),
+                  ),
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: AppColors.cyanColor),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
@@ -101,24 +153,51 @@ class _SignInScreenState extends State<SignInScreen> {
                 width: double.infinity,
                 height: 56,
                 child: isLoading
-                    ? Center(child: CircularProgressIndicator(color: AppColors.cyanColor))
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.cyanColor,
+                        ),
+                      )
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.purplecolor,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: login,
-                        child: const Text("Log In", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          "Log In",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?", style: TextStyle(color: AppColors.subTextColor)),
+                  Text(
+                    "Don't have an account?",
+                    style: TextStyle(color: AppColors.subTextColor),
+                  ),
                   TextButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen())),
-                    child: Text("Create account", style: TextStyle(color: AppColors.cyanColor, fontWeight: FontWeight.bold)),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpScreen(),
+                      ),
+                    ),
+                    child: Text(
+                      "Create account",
+                      style: TextStyle(
+                        color: AppColors.cyanColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
