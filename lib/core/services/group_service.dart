@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/core/services/upload_image.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 //This function is for displaying the group belonging to the current user.
 Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
@@ -27,6 +28,20 @@ Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
           };
         }).toList();
       });
+}
+
+
+Future<int> getGroupMembersCount(String groupId) async{
+  try {
+    final countResponse = await SupabaseService.client
+      .from('GROUP_MEMBER')
+      .select('user_id')
+      .eq('group_id', groupId).count(CountOption.exact);
+
+    return countResponse.count;
+  } catch (e) {
+    return 0;
+  }
 }
 
 // من اسمها واضح بتعمل ايه مش لازم اشرح الصراحة انا اكسل من اني اعمل كدة @ezz
