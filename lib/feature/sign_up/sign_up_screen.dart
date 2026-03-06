@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
 import '../home/home_screen.dart';
@@ -31,10 +32,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
         phone: phoneController.text.trim(),
       );
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar(
+            title: 'Error',
+            message:
+                'Failed to sign up. Please check your information and try again.',
+            color: AppColors.redColor,
+            icon: Icons.error_outline,
+          ),
+        );
+      }
     }
     if (mounted) setState(() => isLoading = false);
   }
@@ -56,14 +70,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Center(
                   child: Column(
                     children: [
-                      Icon(Icons.grid_view_rounded, color: AppColors.cyanColor, size: 60),
+                      Icon(
+                        Icons.grid_view_rounded,
+                        color: AppColors.cyanColor,
+                        size: 60,
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Study", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.purplecolor)),
+                          Text(
+                            "Study",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.purplecolor,
+                            ),
+                          ),
                           const SizedBox(width: 8),
-                          Text("Grid", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.cyanColor)),
+                          Text(
+                            "Grid",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.cyanColor,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -71,14 +103,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 40),
                 // العنوان على الجنب
-                Text("Sign Up", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.mainTextColor)),
+                Text(
+                  "Sign Up",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.mainTextColor,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 // الجملة الوصفية في النص
                 Center(
                   child: Text(
                     "Create your profile to join us",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: AppColors.subTextColor, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.subTextColor,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -86,7 +129,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: nameController,
                   label: "Full Name",
                   prefixIcon: Icons.person_outline,
-                  validator: (value) => value!.isEmpty ? "Enter your name" : null,
+                  validator: (value) =>
+                      value!.isEmpty ? "Enter your name" : null,
                 ),
                 const SizedBox(height: 15),
                 CustomTextField(
@@ -100,7 +144,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: phoneController,
                   label: "Phone Number",
                   prefixIcon: Icons.phone_android_outlined,
-                  validator: (value) => value!.length < 10 ? "Invalid phone" : null,
+                  validator: (value) =>
+                      value!.length < 10 ? "Invalid phone" : null,
                 ),
                 const SizedBox(height: 15),
                 CustomTextField(
@@ -108,21 +153,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   label: "Password",
                   prefixIcon: Icons.lock_outline,
                   isPassword: true,
-                  validator: (value) => value!.length < 6 ? "Short password" : null,
+                  validator: (value) =>
+                      value!.length < 6 ? "Short password" : null,
                 ),
                 const SizedBox(height: 40),
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator(color: AppColors.cyanColor))
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.cyanColor,
+                          ),
+                        )
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.purplecolor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                           onPressed: register,
-                          child: const Text("Create Account", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            "Create Account",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                 ),
                 const SizedBox(height: 20),
@@ -132,8 +191,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Already have an account? ", style: TextStyle(color: AppColors.subTextColor)),
-                        Text("Log In", style: TextStyle(color: AppColors.cyanColor, fontWeight: FontWeight.bold)),
+                        Text(
+                          "Already have an account? ",
+                          style: TextStyle(color: AppColors.subTextColor),
+                        ),
+                        Text(
+                          "Log In",
+                          style: TextStyle(
+                            color: AppColors.cyanColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),

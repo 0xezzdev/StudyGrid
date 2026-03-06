@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/feature/create_group/widget/custom_appbar.dart';
@@ -99,10 +100,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   if (_nameController.text.isEmpty ||
                                       _descController.text.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Enter the name and description",
-                                        ),
+                                      CustomSnackBar(
+                                        title: 'Error',
+                                        message: 'Enter the name and description',
+                                        color: AppColors.redColor,
+                                        icon: Icons.error_outline,
                                       ),
                                     );
                                     return;
