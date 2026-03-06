@@ -43,8 +43,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           CustomSnackBar(
             title: 'Error',
-            message:
-                'Failed to sign up. Please check your information and try again.',
+            message: e.toString().contains("already")
+                ? 'Email already in use'
+                : 'Failed to sign up. Please try again.',
             color: AppColors.redColor,
             icon: Icons.error_outline,
           ),

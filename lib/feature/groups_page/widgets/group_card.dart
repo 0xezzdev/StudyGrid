@@ -6,7 +6,11 @@ class GroupCard extends StatelessWidget {
     super.key,
     required this.groupTitle,
     required this.studentRule,
-    required this.aboutGroup, required this.leftColor, required this.groupImage, required this.notificationNumber,
+    required this.aboutGroup,
+    required this.leftColor,
+    required this.groupImage,
+    required this.notificationNumber,
+    required this.memberCount,
   });
 
   final String groupTitle;
@@ -15,6 +19,7 @@ class GroupCard extends StatelessWidget {
   final Color leftColor;
   final String groupImage;
   final String notificationNumber;
+  final Future<int> memberCount;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +33,7 @@ class GroupCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundImage: NetworkImage(groupImage),
-          ),
+          CircleAvatar(radius: 25, backgroundImage: NetworkImage(groupImage)),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -80,6 +82,33 @@ class GroupCard extends StatelessWidget {
                 Text(
                   aboutGroup,
                   style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.people, size: 14, color: Colors.grey),
+
+                    FutureBuilder<int>(
+                      future: memberCount,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                            ' ... members',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          );
+                        }
+                        final count = snapshot.data ?? 0;
+                        return Text(
+                          ' $count members',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

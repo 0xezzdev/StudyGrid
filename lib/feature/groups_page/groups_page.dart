@@ -3,6 +3,7 @@ import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_search_field.dart';
 import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
+import 'package:study_grid/core/services/auth_service.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/create_group/create_group_screen.dart';
@@ -10,6 +11,7 @@ import 'package:study_grid/feature/groups_page/widgets/add_group_button.dart';
 import 'package:study_grid/feature/groups_page/widgets/group_card.dart';
 import 'package:study_grid/feature/groups_page/widgets/groups_page_appbar.dart';
 import 'package:study_grid/feature/groups_page/widgets/welcome_continaer.dart';
+import 'package:study_grid/feature/sign_in/sign_in_screen.dart';
 
 class GroupsPage extends StatefulWidget {
   const GroupsPage({super.key});
@@ -37,7 +39,19 @@ class _GroupsPageState extends State<GroupsPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 5.0, bottom: 8),
-                child: GroupsPageAppbar(onPressed: () {}),
+                child: GroupsPageAppbar(
+                  onPressed: () {
+                    AuthService().signOut();
+                    if (mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignInScreen(),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
               WelcomeContainer(unreadMessages: 16),
               SizedBox(height: 20),
@@ -308,6 +322,9 @@ class _GroupsPageState extends State<GroupsPage> {
                           leftColor: AppColors.greenColor,
                           groupImage: item['group_img'],
                           notificationNumber: '9',
+                          memberCount: getGroupMembersCount(
+                            item['group_id'].toString(),
+                          ),
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
