@@ -30,13 +30,13 @@ Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
       });
 }
 
-
-Future<int> getGroupMembersCount(String groupId) async{
+Future<int> getGroupMembersCount(String groupId) async {
   try {
     final countResponse = await SupabaseService.client
-      .from('GROUP_MEMBER')
-      .select('user_id')
-      .eq('group_id', groupId).count(CountOption.exact);
+        .from('GROUP_MEMBER')
+        .select('user_id')
+        .eq('group_id', groupId)
+        .count(CountOption.exact);
 
     return countResponse.count;
   } catch (e) {
