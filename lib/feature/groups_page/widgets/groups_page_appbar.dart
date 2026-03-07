@@ -3,10 +3,9 @@ import 'package:study_grid/core/colors/app_colors.dart';
 
 class GroupsPageAppbar extends StatelessWidget {
   const GroupsPageAppbar({
-    super.key, this.onPressed,
+    super.key,
   });
 
-  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class GroupsPageAppbar extends StatelessWidget {
           radius: 20,
           backgroundColor: AppColors.sentMessageMainColor,
           child: Text(
-            "S",
+            "SG",
             style: TextStyle(
               color: AppColors.mainTextColor,
               fontSize: 18,
@@ -34,11 +33,6 @@ class GroupsPageAppbar extends StatelessWidget {
           ),
         ),
         Spacer(),
-        IconButton(
-          onPressed: onPressed,
-          icon: Icon(Icons.settings_outlined),
-          color: AppColors.mainTextColor,
-        ),
       ],
     );
   }

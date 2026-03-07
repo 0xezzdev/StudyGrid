@@ -1,45 +1,42 @@
 import 'package:flutter/material.dart';
 import '../colors/app_colors.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomSearchField extends StatefulWidget {
   final TextEditingController controller;
-  final String label;
-  final IconData prefixIcon;
-  final bool isPassword;
+  final String hint;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final void Function(String)? onChange;
 
-  const CustomTextField({
+  const CustomSearchField({
     super.key,
     required this.controller,
-    required this.label,
-    required this.prefixIcon,
-    this.isPassword = false,
+    required this.hint,
     this.keyboardType = TextInputType.text,
     this.validator,
     this.onChange,
   });
 
   @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
+  State<CustomSearchField> createState() => _CustomSearchField();
 }
 
-class _CustomTextFieldState extends State<CustomTextField> {
-  bool _obscureText = true;
+class _CustomSearchField extends State<CustomSearchField> {
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      obscureText: widget.isPassword ? _obscureText : false,
       keyboardType: widget.keyboardType,
       validator: widget.validator,
       onChanged: widget.onChange,
+
       style: TextStyle(color: AppColors.mainTextColor),
       decoration: InputDecoration(
-        labelText: widget.label,
-        labelStyle: TextStyle(color: AppColors.subTextColor, fontSize: 14),
+        hint: Text(
+          widget.hint,
+          style: TextStyle(color: AppColors.subTextColor),
+        ),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 18,
           horizontal: 20,
@@ -60,23 +57,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: AppColors.redColor),
         ),
-        prefixIcon: Icon(
-          widget.prefixIcon,
-          color: AppColors.subTextColor,
-          size: 20,
-        ),
-        suffixIcon: widget.isPassword
-            ? IconButton(
-                icon: Icon(
-                  _obscureText
-                      ? Icons.visibility_off_rounded
-                      : Icons.visibility_rounded,
-                  color: AppColors.subTextColor,
-                  size: 20,
-                ),
-                onPressed: () => setState(() => _obscureText = !_obscureText),
-              )
-            : null,
+        prefixIcon: Icon(Icons.search, color: AppColors.subTextColor, size: 20),
       ),
     );
   }
