@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:study_grid/core/colors/app_colors.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -37,24 +36,24 @@ class CustomBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(Icons.home_outlined, "Home", 0),
-              _buildNavItem(
-                Icons.chat_bubble_outline,
-                "Chat",
-                1,
-                hasNotification: hasChatNotification,
-              ),
+              _buildNavItem(Icons.task_alt, "To-Do", 1),
               _buildNavItem(
                 Icons.group_outlined,
                 "Groups",
                 2,
                 isSelected: true,
               ),
-              _buildNavItem(Icons.task_alt, "To-Do", 3),
               _buildNavItem(
                 Icons.notifications_none,
                 "Alerts",
-                4,
+                3,
                 hasNotification: hasAlertsNotification,
+              ),
+              _buildNavItem(
+                Icons.settings_outlined,
+                "Settings",
+                4,
+                hasNotification: hasChatNotification,
               ),
             ],
           ),

@@ -22,7 +22,6 @@ class CustomSearchField extends StatefulWidget {
 }
 
 class _CustomSearchField extends State<CustomSearchField> {
-  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {

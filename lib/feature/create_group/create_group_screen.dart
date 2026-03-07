@@ -55,7 +55,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            // اختيار الصورة
                             GestureDetector(
                               onTap: _pickImage,
                               child: CircleAvatar(
@@ -102,7 +101,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       CustomSnackBar(
                                         title: 'Error',
-                                        message: 'Enter the name and description',
+                                        message:
+                                            'Enter the name and description',
                                         color: AppColors.redColor,
                                         icon: Icons.error_outline,
                                       ),

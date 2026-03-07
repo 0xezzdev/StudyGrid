@@ -4,7 +4,6 @@ import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/auth_service.dart';
 import 'package:study_grid/feature/main_screen/main_screen.dart';
-import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
