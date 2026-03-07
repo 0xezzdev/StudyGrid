@@ -1,24 +1,26 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "C/C++ Runner: Debug Session",
-      "type": "cppdbg",
-      "request": "launch",
-      "args": [],
-      "stopAtEntry": false,
-      "externalConsole": false,
-      "cwd": "/mnt/01DBB85CD866CF40/Projects/NTI/study_grid/linux/runner",
-      "program": "/mnt/01DBB85CD866CF40/Projects/NTI/study_grid/linux/runner/build/Debug/outDebug",
-      "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
-      "setupCommands": [
+    "version": "0.2.0",
+    "configurations": [
         {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
+            "name": "Flutter Mobile (Android Emulator)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Flutter Windows",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "windows",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Flutter Chrome",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+            "flutterMode": "debug"
         }
-      ]
-    }
-  ]
+    ]
 }
