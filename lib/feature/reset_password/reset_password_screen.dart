@@ -53,7 +53,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               const SizedBox(height: 60),
 
-              // الجملة في النص
+             
               SizedBox(
                 width: double.infinity,
                 child: Column(
