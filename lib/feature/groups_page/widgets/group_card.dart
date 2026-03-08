@@ -10,7 +10,7 @@ class GroupCard extends StatelessWidget {
     required this.leftColor,
     required this.groupImage,
     required this.notificationNumber,
-    required this.memberCount,
+    required this.memberCount, this.onTap,
   });
 
   final String groupTitle;
@@ -20,100 +20,107 @@ class GroupCard extends StatelessWidget {
   final String groupImage;
   final String notificationNumber;
   final Future<int> memberCount;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.itemsColor,
-        borderRadius: BorderRadius.circular(16),
-        //the left color in card
-        border: Border(left: BorderSide(color: leftColor, width: 4)),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(radius: 25, backgroundImage: NetworkImage(groupImage)),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      groupTitle,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.itemsColor,
+          borderRadius: BorderRadius.circular(16),
+          //the left color in card
+          border: Border(left: BorderSide(color: leftColor, width: 4)),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(radius: 25, backgroundImage: NetworkImage(groupImage)),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        groupTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF6366F1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          notificationNumber,
+                          style: TextStyle(color: Colors.white, fontSize: 10),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF6366F1).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      studentRule,
                       style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        color: AppColors.purplecolor,
+                        fontSize: 10,
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF6366F1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        notificationNumber,
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF6366F1).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    studentRule,
-                    style: TextStyle(
-                      color: AppColors.purplecolor,
-                      fontSize: 10,
                     ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  aboutGroup,
-                  style: TextStyle(color: Colors.grey, fontSize: 13),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.people, size: 14, color: Colors.grey),
+                  SizedBox(height: 8),
+                  Text(
+                    aboutGroup,
+                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.people, size: 14, color: Colors.grey),
 
-                    FutureBuilder<int>(
-                      future: memberCount,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text(
-                            ' ... members',
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                      FutureBuilder<int>(
+                        future: memberCount,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text(
+                              ' ... members',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            );
+                          }
+                          final count = snapshot.data ?? 0;
+                          return Text(
+                            ' $count members',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
                           );
-                        }
-                        final count = snapshot.data ?? 0;
-                        return Text(
-                          ' $count members',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

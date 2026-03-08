@@ -25,6 +25,7 @@ Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
             'group_name': details['name'],
             'group_desc': details['description'],
             'group_img': details['cover_image_url'],
+            'group_id': details['id'],
           };
         }).toList();
       });
@@ -41,6 +42,20 @@ Future<int> getGroupMembersCount(String groupId) async {
     return countResponse.count;
   } catch (e) {
     return 0;
+  }
+}
+
+Future<PostgrestMap?> getGroupDetails(int groupId) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP')
+        .select()
+        .eq('id', groupId)
+        .single();
+    return response;
+  } catch (e) {
+    print("Error fetching group details: $e");
+    return null;
   }
 }
 
@@ -133,3 +148,21 @@ Future<String?> joinGroup({
     return "Error: $e";
   }
 }
+
+// معرفه roule المستخدم في الجروب
+Future<String?> getUserRoleInGroup(String userId, String groupId) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('group_id', groupId)
+        .maybeSingle();
+    return response != null ? response['role'] : null;
+  } catch (e) {
+    print("Error fetching user role: $e");
+    return null;
+  }
+}
+
+
