@@ -6,6 +6,7 @@ import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/create_group/create_group_screen.dart';
+import 'package:study_grid/feature/group_details/group_main_page.dart';
 import 'package:study_grid/feature/groups_page/widgets/add_group_button.dart';
 import 'package:study_grid/feature/groups_page/widgets/group_card.dart';
 import 'package:study_grid/feature/groups_page/widgets/groups_page_appbar.dart';
@@ -302,6 +303,15 @@ class _GroupsPageState extends State<GroupsPage> {
                       itemBuilder: (context, index) {
                         final item = filteredList[index];
                         return GroupCard(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => GroupMainPage(
+                                  groupId: item['group_id'],
+                                ),
+                              ),
+                            );
+                          },
                           groupTitle: item['group_name'],
                           studentRule: item['role'],
                           aboutGroup: item['group_desc'] ?? "",
