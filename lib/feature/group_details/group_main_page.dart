@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
+import 'package:study_grid/feature/chat_page.dart/chat_page.dart';
+import 'package:study_grid/feature/file_page.dart/files_page.dart';
 import 'package:study_grid/feature/group_details/screens/more_tap/more_tap_screen.dart';
 import 'package:study_grid/feature/groups_page/groups_page.dart';
 
 class GroupMainPage extends StatefulWidget {
   final int groupId;
-  const GroupMainPage({super.key, required this.groupId});
+  const GroupMainPage({super.key, required this.groupId, required String userId});
 
   @override
   State<GroupMainPage> createState() => _GroupMainPageState();
@@ -135,18 +137,8 @@ class _GroupMainPageState extends State<GroupMainPage> {
                   : TabBarView(
                       physics: NeverScrollableScrollPhysics(),
                       children: [
-                        Center(
-                          child: Text(
-                            "Chat Screen Content",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            "Files Screen Content",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                        ChatPage(groupId: widget.groupId, groupName: groupName),
+                        FilesPage(groupId: widget.groupId, usserRole: userRole),
                         Center(
                           child: Text(
                             "To-Do Screen Content",

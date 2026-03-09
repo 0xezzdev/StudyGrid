@@ -92,21 +92,28 @@ class _ChatPageState extends State<ChatPage> {
 
   // ── Build ─────────────────────────────────────────────────────────────────
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.backgroundColor,
-    appBar: _buildAppBar(),
-    body: Column(
+@override
+Widget build(BuildContext context) {
+  return Container(
+    color: AppColors.backgroundColor, 
+    child: Column(
       children: [
-        Expanded(child: _buildBody()),
-        InputBar(
-          textController: _textController,
-          showAttachMenu: false,
-          onSend: _sendMessage,
+        Expanded(
+          child: _buildBody(),
+        ),
+        
+        SafeArea(
+          top: false, 
+          child: InputBar(
+            textController: _textController,
+            showAttachMenu: false,
+            onSend: _sendMessage,
+          ),
         ),
       ],
     ),
   );
+}
 
   AppBar _buildAppBar() => AppBar(
     backgroundColor: AppColors.itemsColor,
