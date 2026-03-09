@@ -6,7 +6,6 @@ import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/create_group/create_group_screen.dart';
-import 'package:study_grid/feature/group_details/group_main_page.dart';
 import 'package:study_grid/feature/groups_page/widgets/add_group_button.dart';
 import 'package:study_grid/feature/groups_page/widgets/group_card.dart';
 import 'package:study_grid/feature/groups_page/widgets/groups_page_appbar.dart';
@@ -25,12 +24,6 @@ class _GroupsPageState extends State<GroupsPage> {
   final _inviteCodeController = TextEditingController();
   final _searchController = TextEditingController();
   String searchQuery = "";
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -272,9 +265,6 @@ class _GroupsPageState extends State<GroupsPage> {
                   }
 
                   final filteredList = snapshot.data!.where((item) {
-                    final bool isValidGroup =
-                        item['group_name'] != null &&
-                        item['group_name'] != 'Unknown';
                     final groupName = item['group_name']
                         .toString()
                         .toLowerCase();
@@ -312,15 +302,6 @@ class _GroupsPageState extends State<GroupsPage> {
                       itemBuilder: (context, index) {
                         final item = filteredList[index];
                         return GroupCard(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GroupMainPage(groupId: item['group_id']),
-                              ),
-                            );
-                            setState(() {});
-                          },
                           groupTitle: item['group_name'],
                           studentRule: item['role'],
                           aboutGroup: item['group_desc'] ?? "",
