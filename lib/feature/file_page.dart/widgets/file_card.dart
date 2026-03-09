@@ -90,16 +90,19 @@ class _FileMeta extends StatelessWidget {
               fontWeight: FontWeight.w600),
           maxLines: 1, overflow: TextOverflow.ellipsis),
       const SizedBox(height: 4),
-      Row(children: [
-        Text('${file.sizeMB.toStringAsFixed(1)} MB',
-            style: const TextStyle(color: Colors.white38, fontSize: 11)),
-        const Text(' · ', style: TextStyle(color: Colors.white24, fontSize: 11)),
-        Text(file.uploaderName,
-            style: const TextStyle(color: Colors.white38, fontSize: 11)),
-        const Text(' · ', style: TextStyle(color: Colors.white24, fontSize: 11)),
-        Text(formattedTime,
-            style: const TextStyle(color: Colors.white38, fontSize: 11)),
-      ]),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          Text('${file.sizeMB.toStringAsFixed(1)} MB',
+              style: const TextStyle(color: Colors.white38, fontSize: 11)),
+          const Text(' · ', style: TextStyle(color: Colors.white24, fontSize: 11)),
+          Text(file.uploaderName,
+              style: const TextStyle(color: Colors.white38, fontSize: 11)),
+          const Text(' · ', style: TextStyle(color: Colors.white24, fontSize: 11)),
+          Text(formattedTime,
+              style: const TextStyle(color: Colors.white38, fontSize: 11)),
+        ]),
+      ),
     ],
   );
 }
