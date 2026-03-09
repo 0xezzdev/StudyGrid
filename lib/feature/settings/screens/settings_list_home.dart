@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/image/images_const.dart';
 import 'package:study_grid/core/models/settings_items_list.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/settings/screens/about.dart';
@@ -73,7 +74,7 @@ class _SettingsListHomeState extends State<SettingsListHome> {
                           backgroundImage: userPhoto != null
                               ? NetworkImage(userPhoto)
                               : NetworkImage(
-                                  'https://pexiueyzeprdnjeluvin.supabase.co/storage/v1/object/public/profile_photo/df_profile.jpg',
+                                  ImagesConst.defaultProfileAvatar,
                                 ),
                         ),
                         const SizedBox(height: 15),

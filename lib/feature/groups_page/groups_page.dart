@@ -25,6 +25,12 @@ class _GroupsPageState extends State<GroupsPage> {
   final _inviteCodeController = TextEditingController();
   final _searchController = TextEditingController();
   String searchQuery = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,6 +272,9 @@ class _GroupsPageState extends State<GroupsPage> {
                   }
 
                   final filteredList = snapshot.data!.where((item) {
+                    final bool isValidGroup =
+                        item['group_name'] != null &&
+                        item['group_name'] != 'Unknown';
                     final groupName = item['group_name']
                         .toString()
                         .toLowerCase();
@@ -306,11 +315,11 @@ class _GroupsPageState extends State<GroupsPage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => GroupMainPage(
-                                  groupId: item['group_id'],
-                                ),
+                                builder: (context) =>
+                                    GroupMainPage(groupId: item['group_id']),
                               ),
                             );
+                            setState(() {});
                           },
                           groupTitle: item['group_name'],
                           studentRule: item['role'],
