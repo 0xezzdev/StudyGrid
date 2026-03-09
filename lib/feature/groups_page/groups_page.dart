@@ -309,8 +309,18 @@ class _GroupsPageState extends State<GroupsPage> {
                           leftColor: AppColors.greenColor,
                           groupImage: item['group_img'],
                           notificationNumber: '9',
-                          memberCount: getGroupMembersCount(
-                            item['group_id'].toString(),
+                          memberCountWidget: StreamBuilder<int>(
+                            stream: streamGroupMembersCount(item['group_id']),
+                            builder: (context, snapshot) {
+                              final count = snapshot.data ?? 0;
+                              return Text(
+                                '$count members',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
                           ),
                           onTap: () {
                             Navigator.of(context).push(

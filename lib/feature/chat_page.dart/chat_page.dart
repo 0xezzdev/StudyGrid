@@ -115,31 +115,6 @@ Widget build(BuildContext context) {
   );
 }
 
-  AppBar _buildAppBar() => AppBar(
-    backgroundColor: AppColors.itemsColor,
-    elevation: 0,
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back, color: Colors.white70),
-      onPressed: () => Navigator.pop(context),
-    ),
-    title: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.groupName.isEmpty ? 'Group Chat' : widget.groupName,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        const Text(
-          'Group Chat',
-          style: TextStyle(fontSize: 11, color: Colors.white38),
-        ),
-      ],
-    ),
-  );
 
   Widget _buildBody() {
     if (_isLoading) {
