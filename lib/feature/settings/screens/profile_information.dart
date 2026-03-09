@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_snackbar.dart';
+import 'package:study_grid/core/image/images_const.dart';
 import 'package:study_grid/core/services/settings_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 
@@ -76,7 +77,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                       user!.userMetadata!['avatar_url'],
                                     )
                                   : const NetworkImage(
-                                      'https://pexiueyzeprdnjeluvin.supabase.co/storage/v1/object/public/profile_photo/df_profile.jpg',
+                                      ImagesConst.defaultProfileAvatar,
                                     ))
                               as ImageProvider,
                   ),
@@ -136,7 +137,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                onPressed: () async{
+                onPressed: () async {
                   if (_nameController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       CustomSnackBar(

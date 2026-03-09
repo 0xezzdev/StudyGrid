@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_text_field.dart';
@@ -13,42 +14,51 @@ class UpdatePasswordScreen extends StatefulWidget {
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); 
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   Future<void> _updatePassword() async {
-    
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      
       await Supabase.instance.client.auth.updateUser(
         UserAttributes(password: _passwordController.text.trim()),
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Success! Your password has been updated."),
-            backgroundColor: Colors.green,
+          CustomSnackBar(
+            title: 'Success',
+            message: 'Your password has been updated.',
+            icon: Icons.check,
+            color: AppColors.greenColor,
           ),
         );
-        
-       
+
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       }
     } on AuthException catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message), backgroundColor: Colors.red),
+          CustomSnackBar(
+            title: 'Error',
+            message: error.message,
+            icon: Icons.error,
+            color: Colors.red,
+          ),
         );
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("An unexpected error occurred"), backgroundColor: Colors.red),
+          CustomSnackBar(
+            title: 'Error',
+            message: 'An unexpected error occurred',
+            icon: Icons.error,
+            color: Colors.red,
+          ),
         );
       }
     } finally {
@@ -95,37 +105,41 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                   controller: _passwordController,
                   label: "New Password",
                   prefixIcon: Icons.lock_outline,
-                  isPassword: true, 
+                  isPassword: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter a password";
-                    if (value.length < 6) return "Password must be at least 6 characters";
+                    if (value == null || value.isEmpty)
+                      return "Please enter a password";
+                    if (value.length < 6)
+                      return "Password must be at least 6 characters";
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 20),
 
-                
                 CustomTextField(
                   controller: _confirmPasswordController,
                   label: "Confirm Password",
                   prefixIcon: Icons.lock_reset_outlined,
-                  isPassword: true, 
+                  isPassword: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please confirm your password";
-                    if (value != _passwordController.text) return "Passwords do not match";
+                    if (value == null || value.isEmpty)
+                      return "Please confirm your password";
+                    if (value != _passwordController.text)
+                      return "Passwords do not match";
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 40),
 
-                
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: _isLoading
-                      ? const Center(child: CircularProgressIndicator(color: Colors.cyan))
+                      ? const Center(
+                          child: CircularProgressIndicator(color: Colors.cyan),
+                        )
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.purplecolor,
@@ -145,10 +159,11 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                           ),
                         ),
                 ),
-                
+
                 const SizedBox(height: 20),
                 TextButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                  onPressed: () =>
+                      Navigator.pushReplacementNamed(context, '/login'),
                   child: Text(
                     "Back to Login",
                     style: TextStyle(color: AppColors.subTextColor),

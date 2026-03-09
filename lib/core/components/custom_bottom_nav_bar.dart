@@ -24,7 +24,7 @@ class CustomBottomNavBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
         child: Container(
-          height: 95,
+          height: 85,
           decoration: BoxDecoration(
             color: Colors.transparent.withValues(alpha: 0.2),
             border: Border.all(
