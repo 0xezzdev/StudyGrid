@@ -11,8 +11,6 @@ import 'package:study_grid/feature/groups_page/widgets/group_card.dart';
 import 'package:study_grid/feature/groups_page/widgets/groups_page_appbar.dart';
 import 'package:study_grid/feature/groups_page/widgets/welcome_continaer.dart';
 
-import '../chat_page.dart/chat_page.dart';
-
 class GroupsPage extends StatefulWidget {
   const GroupsPage({super.key});
 
@@ -303,22 +301,15 @@ class _GroupsPageState extends State<GroupsPage> {
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
                         final item = filteredList[index];
-                        return GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => ChatPage(groupId: item['group_id'], groupName: item['group_name'],),
-                            ));
-                          },
-                          child: GroupCard(
-                            groupTitle: item['group_name'],
-                            studentRule: item['role'],
-                            aboutGroup: item['group_desc'] ?? "",
-                            leftColor: AppColors.greenColor,
-                            groupImage: item['group_img'],
-                            notificationNumber: '9',
-                            memberCount: getGroupMembersCount(
-                              item['group_id'].toString(),
-                            ),
+                        return GroupCard(
+                          groupTitle: item['group_name'],
+                          studentRule: item['role'],
+                          aboutGroup: item['group_desc'] ?? "",
+                          leftColor: AppColors.greenColor,
+                          groupImage: item['group_img'],
+                          notificationNumber: '9',
+                          memberCount: getGroupMembersCount(
+                            item['group_id'].toString(),
                           ),
                         );
                       },

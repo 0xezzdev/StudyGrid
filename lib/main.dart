@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/splash_screen/widget/splash_screen.dart';
+import 'package:study_grid/feature/reset_password/update_password_screen.dart'; 
+import 'package:study_grid/feature/sign_in/sign_in_screen.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await SupabaseService.init();
@@ -16,9 +17,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      title: 'Study Grid',
+      
+      
+      initialRoute: '/',
+      
+      routes: {
+       
+        '/': (context) => const SplashScreen(),
+        
+        
+        '/login': (context) => const SignInScreen(),
+        
+        
+        '/update-password': (context) => const UpdatePasswordScreen(),
+      },
     );
   }
 }
