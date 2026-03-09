@@ -9,7 +9,11 @@ import 'package:study_grid/feature/groups_page/groups_page.dart';
 
 class GroupMainPage extends StatefulWidget {
   final int groupId;
-  const GroupMainPage({super.key, required this.groupId, required String userId});
+  const GroupMainPage({
+    super.key,
+    required this.groupId,
+    required String userId,
+  });
 
   @override
   State<GroupMainPage> createState() => _GroupMainPageState();
