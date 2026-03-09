@@ -10,7 +10,8 @@ class GroupCard extends StatelessWidget {
     required this.leftColor,
     required this.groupImage,
     required this.notificationNumber,
-    required this.memberCount, this.onTap,
+    required this.memberCountWidget,
+    this.onTap,
   });
 
   final String groupTitle;
@@ -19,7 +20,7 @@ class GroupCard extends StatelessWidget {
   final Color leftColor;
   final String groupImage;
   final String notificationNumber;
-  final Future<int> memberCount;
+  final Widget memberCountWidget;
   final void Function()? onTap;
 
   @override
@@ -90,30 +91,8 @@ class GroupCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.people, size: 14, color: Colors.grey),
-
-                      FutureBuilder<int>(
-                        future: memberCount,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text(
-                              ' ... members',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            );
-                          }
-                          final count = snapshot.data ?? 0;
-                          return Text(
-                            ' $count members',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          );
-                        },
-                      ),
+                      const SizedBox(width: 4),
+                      memberCountWidget,
                     ],
                   ),
                 ],

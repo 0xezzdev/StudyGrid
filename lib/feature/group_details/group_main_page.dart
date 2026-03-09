@@ -5,11 +5,14 @@ import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/chat_page.dart/chat_page.dart';
 import 'package:study_grid/feature/file_page.dart/files_page.dart';
 import 'package:study_grid/feature/group_details/screens/more_tap/more_tap_screen.dart';
-import 'package:study_grid/feature/groups_page/groups_page.dart';
 
 class GroupMainPage extends StatefulWidget {
   final int groupId;
-  const GroupMainPage({super.key, required this.groupId, required String userId});
+  const GroupMainPage({
+    super.key,
+    required this.groupId,
+    required String userId,
+  });
 
   @override
   State<GroupMainPage> createState() => _GroupMainPageState();
@@ -20,7 +23,7 @@ class _GroupMainPageState extends State<GroupMainPage> {
   late String groupPhotoUrl;
   late String groupDesc;
   late String inviteCode;
-  late int membersCount;
+  int membersCount = 0;
   bool isLoading = true;
   final currentUser = SupabaseService.client.auth.currentUser;
   String? get userId => currentUser?.id;
@@ -72,13 +75,19 @@ class _GroupMainPageState extends State<GroupMainPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          '$membersCount members •',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 11,
-                          ),
+                        const SizedBox(height: 4),
+                        StreamBuilder<int>(
+                          stream: streamGroupMembersCount(widget.groupId),
+                          builder: (context, snapshot) {
+                            final currentCount = snapshot.data ?? membersCount;
+                            return Text(
+                              '$currentCount members •',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -134,52 +143,61 @@ class _GroupMainPageState extends State<GroupMainPage> {
                         color: Color(0xFF7B61FF),
                       ),
                     )
-                  : TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        ChatPage(groupId: widget.groupId, groupName: groupName),
-                        FilesPage(groupId: widget.groupId, usserRole: userRole),
-                        Center(
-                          child: Text(
-                            "To-Do Screen Content",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        MoreTabScreen(
-                          userRole: userRole,
-                          membersCount: membersCount,
-                          onLeaveGroup: () {
-                            leaveGroup(
-                              context,
-                              userId: userId!,
+                  : StreamBuilder<int>(
+                      stream: streamGroupMembersCount(widget.groupId),
+                      builder: (context, snapshot) {
+                        final liveCount = snapshot.data ?? membersCount;
+
+                        return TabBarView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            ChatPage(
                               groupId: widget.groupId,
-                              membersCount: membersCount,
+                              groupName: groupName,
+                            ),
+
+                            FilesPage(
+                              groupId: widget.groupId,
+                              usserRole: userRole,
+                            ),
+
+                            const Center(
+                              child: Text(
+                                "To-Do Screen Content",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+
+                            MoreTabScreen(
                               userRole: userRole,
-                            );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => GroupsPage()),
-                            );
-                          },
-                          inviteCode: inviteCode,
-                          groupId: widget.groupId,
-                          onRefresh: () => _loadGroupDetails(),
-                          groupName: groupName,
-                          groupDesc: groupDesc,
-                          groupPhotoUrl: groupPhotoUrl,
-                          onDeleteGroup: () {
-                            deleteGroup(
-                              context,
+                              membersCount:
+                                  liveCount,
+                              onLeaveGroup: () {
+                                leaveGroup(
+                                  context,
+                                  userId: userId!,
+                                  groupId: widget.groupId,
+                                  membersCount: liveCount,
+                                  userRole: userRole,
+                                );
+                              },
+                              inviteCode: inviteCode,
                               groupId: widget.groupId,
-                              userId: userId!,
-                            );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => GroupsPage()),
-                            );
-                          },
-                        ),
-                      ],
+                              onRefresh: () => _loadGroupDetails(),
+                              groupName: groupName,
+                              groupDesc: groupDesc,
+                              groupPhotoUrl: groupPhotoUrl,
+                              onDeleteGroup: () {
+                                deleteGroup(
+                                  context,
+                                  groupId: widget.groupId,
+                                  userId: userId!,
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     ),
             ),
           );
@@ -189,7 +207,6 @@ class _GroupMainPageState extends State<GroupMainPage> {
     try {
       final results = await Future.wait([
         getGroupDetails(widget.groupId),
-        getGroupMembersCount(widget.groupId.toString()),
         getUserRoleInGroup(userId!, widget.groupId.toString()),
       ]);
 
@@ -200,8 +217,7 @@ class _GroupMainPageState extends State<GroupMainPage> {
           groupName = data['name'] ?? 'Group Details';
           groupPhotoUrl = data['cover_image_url'] ?? '';
           groupDesc = data['description'] ?? '';
-          membersCount = results[1] as int;
-          userRole = results[2] as String;
+          userRole = results[1] as String;
           inviteCode = data['invite_code'] ?? '';
           isLoading = false;
         });

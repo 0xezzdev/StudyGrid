@@ -4,6 +4,7 @@ import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/image/images_const.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
+import 'package:study_grid/feature/group_details/screens/more_tap/add_member_page.dart';
 import 'package:study_grid/feature/group_details/screens/more_tap/edit_group_page.dart';
 
 class MoreTabScreen extends StatelessWidget {
@@ -55,7 +56,13 @@ class MoreTabScreen extends StatelessWidget {
               ),
             );
           }),
-          _buildMoreItem(Icons.person_add, "Add Members", () {}),
+          _buildMoreItem(Icons.person_add, "Add Members", () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AddMembersPage(groupId: groupId),
+              ),
+            );
+          }),
           _buildMoreItem(Icons.pin, "Invite Code", () {
             showDialog(
               context: context,

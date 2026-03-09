@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/core/image/images_const.dart';
@@ -12,7 +13,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
   if (userId == null) return Stream.value([]);
 
-  // 1. الـ Stream هيفضل على جدول الميمبرز عشان ده اللي بيحدد "إنت في أني جروب"
   return SupabaseService.client
       .from('GROUP_MEMBER')
       .stream(primaryKey: ['id'])
@@ -45,18 +45,17 @@ Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
       });
 }
 
-Future<int> getGroupMembersCount(String groupId) async {
-  try {
-    final countResponse = await SupabaseService.client
-        .from('GROUP_MEMBER')
-        .select('user_id')
-        .eq('group_id', groupId)
-        .count(CountOption.exact);
+Stream<int> streamGroupMembersCount(int groupId) {
+  print("Starting Stream for Group: $groupId");
 
-    return countResponse.count;
-  } catch (e) {
-    return 0;
-  }
+  return SupabaseService.client
+      .from('GROUP_MEMBER')
+      .stream(primaryKey: ['id'])
+      .eq('group_id', groupId)
+      .map((data) {
+        print("Realtime Update Received: ${data.length} rows");
+        return data.length;
+      });
 }
 
 Future<PostgrestMap?> getGroupDetails(int groupId) async {
@@ -80,42 +79,40 @@ Future<void> createNewGroup({
   required String userId,
   File? imageFile,
 }) async {
-  if (userId != null) {
-    try {
-      String? imageUrl;
-      // هنا برفع الصورة للستورج عشان اخد منها الرابط اخزنه في جدول المجموعات
-      if (imageFile != null) {
-        final uploadService = StorageService();
-        imageUrl = await uploadService.uploadFile(
-          file: imageFile,
-          bucketName: 'group_avatars',
-        );
-      }
-
-      // دي الصورة الافتراضية لو عايزين نغيرها ارفعوا الصورة علىة الستورج و حطوا الرابط
-      imageUrl ??= ImagesConst.defaultGroupAvatar;
-      final groupResponse = await SupabaseService.client
-          .from('GROUP')
-          .insert({
-            'name': name,
-            'description': description,
-            'created_by': userId,
-            'cover_image_url': imageUrl,
-          })
-          .select()
-          .single();
-
-      final groupId = groupResponse['id'];
-
-      // هنا بخزن في البردج المفروض انتم فاهمين كده ف مش هشرح
-      await SupabaseService.client.from('GROUP_MEMBER').insert({
-        'group_id': groupId,
-        'user_id': userId,
-        'role': 'admin',
-      });
-    } catch (e) {
-      print("Error: $e");
+  try {
+    String? imageUrl;
+    // هنا برفع الصورة للستورج عشان اخد منها الرابط اخزنه في جدول المجموعات
+    if (imageFile != null) {
+      final uploadService = StorageService();
+      imageUrl = await uploadService.uploadFile(
+        file: imageFile,
+        bucketName: 'group_avatars',
+      );
     }
+
+    // دي الصورة الافتراضية لو عايزين نغيرها ارفعوا الصورة علىة الستورج و حطوا الرابط
+    imageUrl ??= ImagesConst.defaultGroupAvatar;
+    final groupResponse = await SupabaseService.client
+        .from('GROUP')
+        .insert({
+          'name': name,
+          'description': description,
+          'created_by': userId,
+          'cover_image_url': imageUrl,
+        })
+        .select()
+        .single();
+
+    final groupId = groupResponse['id'];
+
+    // هنا بخزن في البردج المفروض انتم فاهمين كده ف مش هشرح
+    await SupabaseService.client.from('GROUP_MEMBER').insert({
+      'group_id': groupId,
+      'user_id': userId,
+      'role': 'admin',
+    });
+  } catch (e) {
+    print("Error: $e");
   }
 }
 
@@ -271,7 +268,6 @@ void removeFromGroup(
   }
 }
 
-// Function to update group info (Clean & Modular)
 Future<bool> updateGroupDetails({
   required int groupId,
   required String name,
@@ -379,5 +375,82 @@ Future<void> leaveGroup(
     );
   } catch (e) {
     print("Error: $e");
+  }
+}
+
+Future<List<Map<String, dynamic>>> getRegisteredContacts() async {
+  try {
+    final status = await FlutterContacts.permissions.request(
+      PermissionType.read,
+    );
+
+    if (status == PermissionStatus.granted) {
+      final List<Contact> contacts = await FlutterContacts.getAll(
+        properties: {ContactProperty.phone},
+      );
+
+      final List<String> phoneNumbers = contacts
+          .expand((c) => c.phones)
+          .map((p) {
+            String cleaned = p.number.replaceAll(RegExp(r'[^\d]'), '');
+            cleaned = cleaned.startsWith('2') ? cleaned.substring(1) : cleaned;
+            return cleaned;
+          })
+          .where((number) => number.isNotEmpty)
+          .toList();
+
+      if (phoneNumbers.isEmpty) return [];
+
+      final response = await SupabaseService.client
+          .from('users')
+          .select('id, name, avatar_url, phone')
+          .filter('phone', 'in', phoneNumbers);
+      print("Contacts Matching Response: $response");
+      return List<Map<String, dynamic>>.from(response);
+    }
+    return [];
+  } catch (e) {
+    print("Contacts Matching Error: $e");
+    return [];
+  }
+}
+
+Future<void> addMember(BuildContext context, int groupId, String userId) async {
+  try {
+    //check if user is already a member
+    final existingMember = await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .select()
+        .eq('group_id', groupId)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (existingMember != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        CustomSnackBar(
+          title: 'Info',
+          message: 'User is already a member of the group.',
+          icon: Icons.info,
+          color: AppColors.yellowColor,
+        ),
+      );
+      return;
+    }
+
+    await SupabaseService.client.from('GROUP_MEMBER').insert({
+      'group_id': groupId,
+      'user_id': userId,
+      'role': 'member',
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'Member added successfully!',
+        icon: Icons.check,
+        color: AppColors.greenColor,
+      ),
+    );
+  } catch (e) {
+    print("Error adding member: $e");
   }
 }

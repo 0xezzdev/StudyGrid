@@ -54,25 +54,6 @@ class _FilesPageState extends State<FilesPage> {
     super.dispose();
   }
 
-  // ── Admin check ────────────────────────────────────────────────────────────
-
-  // Future<void> _checkAdmin() async {
-  //   final admin = await _fileService.isAdmin(widget.groupId);
-  //   if (mounted) setState(() => _isAdmin = admin);
-  // }
-
-  // ── Stream ─────────────────────────────────────────────────────────────────
-
-  void _startStream() {
-    _sub = _fileService.filesStream(widget.groupId).listen((files) {
-      if (!mounted) return;
-      setState(() {
-        _files = files;
-        _isLoading = false;
-      });
-    });
-  }
-
   // ── Upload ─────────────────────────────────────────────────────────────────
 
   Future<void> _uploadFile() async {
@@ -218,43 +199,6 @@ class _FilesPageState extends State<FilesPage> {
           : _buildFileList(),
     );
   }
-
-  AppBar _buildAppBar() => AppBar(
-    backgroundColor: AppColors.itemsColor,
-    elevation: 0,
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back, color: Colors.white70),
-      onPressed: () => Navigator.pop(context),
-    ),
-    title: const Text(
-      'Files',
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: Colors.white,
-      ),
-    ),
-    actions: [
-      if (_isAdmin)
-        Container(
-          margin: const EdgeInsets.only(right: 12),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.purplecolor.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.purplecolor.withOpacity(0.4)),
-          ),
-          child: Text(
-            'Admin',
-            style: TextStyle(
-              color: AppColors.purplecolor,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-    ],
-  );
 
   Widget _buildFab() => FloatingActionButton.extended(
     onPressed: _isUploading ? null : _uploadFile,

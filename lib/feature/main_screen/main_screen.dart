@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
 import 'package:study_grid/core/components/custom_bottom_nav_bar.dart';
-import 'package:study_grid/feature/groups_page/groups_page.dart';
 import 'package:study_grid/feature/groups_page/groups_page_controller.dart';
 import 'package:study_grid/feature/settings/settings_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,7 +12,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
