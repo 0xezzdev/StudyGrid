@@ -54,17 +54,17 @@ class GroupCard extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF6366F1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          notificationNumber,
-                          style: TextStyle(color: Colors.white, fontSize: 10),
-                        ),
-                      ),
+                      // Container(
+                      //   padding: EdgeInsets.all(6),
+                      //   decoration: BoxDecoration(
+                      //     color: Color(0xFF6366F1),
+                      //     shape: BoxShape.circle,
+                      //   ),
+                      //   child: Text(
+                      //     notificationNumber,
+                      //     style: TextStyle(color: Colors.white, fontSize: 10),
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(height: 4),
