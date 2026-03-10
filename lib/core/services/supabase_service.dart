@@ -8,4 +8,6 @@ class SupabaseService {
   }
 
   static SupabaseClient get client => Supabase.instance.client;
+
+  static get auth => null;
 }

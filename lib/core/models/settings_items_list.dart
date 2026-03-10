@@ -14,7 +14,7 @@ class SettingsItemsList {
       subtitle: 'Adjust your privacy and security settings',
     ),
     SettingsItems(
-      icon: Icons.lock,
+      icon: Icons.notifications_active,
       title: 'Notifications',
       subtitle: 'Manage your notification preferences',
     ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "859634921650",
+    "project_id": "studygrid-b1a7c",
+    "storage_bucket": "studygrid-b1a7c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859634921650:android:0ed6932410d426cef1d9ab",
+        "android_client_info": {
+          "package_name": "com.nti.study_grid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2QvwpWKEVX4NxsFXRz-hp1Skrj1KK65U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
