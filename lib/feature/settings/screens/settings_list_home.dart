@@ -5,7 +5,6 @@ import 'package:study_grid/core/models/settings_items_list.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/settings/screens/about.dart';
 import 'package:study_grid/feature/settings/screens/notification_settings_page.dart';
-import 'package:study_grid/feature/settings/screens/notifications_settins.dart';
 import 'package:study_grid/feature/settings/screens/privacy_and_security.dart';
 import 'package:study_grid/feature/settings/screens/profile_information.dart';
 import 'package:study_grid/feature/settings/widget/settings_items.dart';
