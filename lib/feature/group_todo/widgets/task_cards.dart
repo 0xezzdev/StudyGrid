@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/feature/group_todo/features/group_task_model.dart';
 import 'package:study_grid/feature/group_todo/widgets/task_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -68,8 +69,27 @@ class _TaskCardsState extends State<TaskCards> {
   }
 
   Future<void> _deleteTask(int taskId) async {
-    await _supabase.from('group_todo').delete().eq('id', taskId);
-    _fetchTasks(); // ← ضيف دي
+    try {
+      await _supabase.from('group_todo').delete().eq('id', taskId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        CustomSnackBar(
+          title: 'Task Deleted',
+          message: 'Task deleted successfully!',
+          icon: Icons.check,
+          color: AppColors.greenColor,
+        ),
+      );
+      _fetchTasks();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        CustomSnackBar(
+          title: 'Failed to Delete Task',
+          message: 'Failed to delete task. Please try again.',
+          icon: Icons.error,
+          color: AppColors.redColor,
+        ),
+      );
+    }
   }
 
   @override

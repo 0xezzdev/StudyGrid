@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/feature/group_todo/features/group_task_model.dart';
 import 'package:study_grid/feature/group_todo/features/task_helpers.dart';
 //import 'package:study_grid/feature/group_todo/models/group_task_model.dart';
@@ -116,7 +117,7 @@ class TaskCard extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Task title',
                   hintStyle: TextStyle(
-                    color: AppColors.subTextColor.withOpacity(0.5),
+                    color: AppColors.subTextColor.withValues(alpha: 0.5),
                   ),
                   filled: true,
                   fillColor: AppColors.backgroundColor,
@@ -171,6 +172,9 @@ class TaskCard extends StatelessWidget {
                             )[0],
                           })
                           .eq('id', task.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          CustomSnackBar(title: 'Task Updated', message: 'Task updated successfully!', icon: Icons.check,color: AppColors.greenColor,)
+                        );
                       Navigator.pop(context);
                       onRefresh();
                     } catch (e) {

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
 import 'package:study_grid/feature/group_todo/features/task_helpers.dart';
 import 'package:study_grid/feature/group_todo/widgets/task_cards.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class GroupToDo extends StatelessWidget {
   final int groupId;
-  const GroupToDo({super.key, required this.groupId});
+  final String currentUserRole;
+  const GroupToDo({
+    super.key,
+    required this.groupId,
+    required this.currentUserRole,
+  });
 
   void _showAddSheet(BuildContext context) {
     final titleController = TextEditingController();
@@ -46,7 +52,7 @@ class GroupToDo extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Task title',
                   hintStyle: TextStyle(
-                    color: AppColors.subTextColor.withOpacity(0.5),
+                    color: AppColors.subTextColor.withValues(alpha: 0.5),
                   ),
                   filled: true,
                   fillColor: AppColors.backgroundColor,
@@ -106,8 +112,14 @@ class GroupToDo extends StatelessWidget {
                         'created_by':
                             Supabase.instance.client.auth.currentUser!.id,
                       });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        CustomSnackBar(title: 'Task Added', message: 'Task added successfully!', icon: Icons.check,color: AppColors.greenColor,)
+                      );
                       Navigator.pop(context);
                     } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        CustomSnackBar(title: 'Failed to Add Task', message: 'Failed to add task. Please try again.', icon: Icons.error,color: AppColors.redColor,)
+                      );
                       print('Error inserting task: $e');
                     }
                   },
@@ -126,14 +138,13 @@ class GroupToDo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Column(
-            children: [
-              // Add new task button
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          children: [
+            // Add new task button if user is admin
+            if (currentUserRole == 'admin')
               GestureDetector(
                 onTap: () => _showAddSheet(context),
                 child: Container(
@@ -165,11 +176,11 @@ class GroupToDo extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              // Tasks list
-              Expanded(child: TaskCards(groupId: groupId)),
-            ],
-          ),
+
+            const SizedBox(height: 10),
+            // Tasks list
+            Expanded(child: TaskCards(groupId: groupId)),
+          ],
         ),
       ),
     );

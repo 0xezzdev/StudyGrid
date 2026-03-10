@@ -183,7 +183,7 @@ class _FilesPageState extends State<FilesPage> {
 
       floatingActionButton: _isAdmin
           ? Padding(
-              padding: const EdgeInsets.only(bottom: 80.0),
+              padding: const EdgeInsets.only(bottom: 10.0),
               child: _buildFab(),
             )
           : null,
