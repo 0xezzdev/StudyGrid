@@ -6,6 +6,7 @@ import 'package:study_grid/core/components/custom_text_field.dart';
 import 'package:study_grid/core/services/group_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/create_group/create_group_screen.dart';
+import 'package:study_grid/feature/group_details/group_main_page.dart';
 import 'package:study_grid/feature/groups_page/widgets/add_group_button.dart';
 import 'package:study_grid/feature/groups_page/widgets/group_card.dart';
 import 'package:study_grid/feature/groups_page/widgets/groups_page_appbar.dart';
@@ -308,9 +309,29 @@ class _GroupsPageState extends State<GroupsPage> {
                           leftColor: AppColors.greenColor,
                           groupImage: item['group_img'],
                           notificationNumber: '9',
-                          memberCount: getGroupMembersCount(
-                            item['group_id'].toString(),
+                          memberCountWidget: StreamBuilder<int>(
+                            stream: streamGroupMembersCount(item['group_id']),
+                            builder: (context, snapshot) {
+                              final count = snapshot.data ?? 0;
+                              return Text(
+                                '$count members',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
                           ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => GroupMainPage(
+                                  groupId: item['group_id'],
+                                  userId: userId!,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {

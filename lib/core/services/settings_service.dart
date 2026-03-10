@@ -17,13 +17,13 @@ Future<void> updateProfile(
     String? imageUrl;
 
     if (imageFile != null) {
-      final fileName = '${user!.id}_profile.jpg';
+      final fileName = '${user.id}_profile.jpg';
 
       await SupabaseService.client.storage
           .from('profile_photo')
           .upload(
             fileName,
-            imageFile!,
+            imageFile,
             fileOptions: const FileOptions(upsert: true),
           );
 
@@ -47,7 +47,7 @@ Future<void> updateProfile(
           'phone': phone,
           if (imageUrl != null) 'avatar_url': imageUrl,
         })
-        .eq('id', user!.id);
+        .eq('id', user.id);
 
     ScaffoldMessenger.of(context).showSnackBar(
       CustomSnackBar(

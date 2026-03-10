@@ -12,12 +12,10 @@ class AuthService {
     final response = await supabase.auth.signUp(
       email: email,
       password: password,
-
       data: {'full_name': name, 'phone': phone},
     );
 
     final user = response.user;
-
     if (user == null) {
       throw Exception("Signup failed");
     }
@@ -27,8 +25,13 @@ class AuthService {
     await supabase.auth.signInWithPassword(email: email, password: password);
   }
 
+ 
   Future<void> resetPassword(String email) async {
-    await supabase.auth.resetPasswordForEmail(email);
+    await supabase.auth.resetPasswordForEmail(
+      email,
+      
+      redirectTo: 'studygrid://login-callback', 
+    );
   }
 
   void signOut() {

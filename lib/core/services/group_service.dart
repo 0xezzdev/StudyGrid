@@ -1,46 +1,74 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:study_grid/core/colors/app_colors.dart';
+import 'package:study_grid/core/components/custom_snackbar.dart';
+import 'package:study_grid/core/image/images_const.dart';
+import 'package:study_grid/core/services/storage_service.dart';
 import 'package:study_grid/core/services/supabase_service.dart';
-import 'package:study_grid/core/services/upload_image.dart';
+import 'package:study_grid/feature/groups_page/groups_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 //This function is for displaying the group belonging to the current user.
 Stream<List<Map<String, dynamic>>> myGroupsStream(String? userId) {
   if (userId == null) return Stream.value([]);
+
   return SupabaseService.client
       .from('GROUP_MEMBER')
       .stream(primaryKey: ['id'])
-      .eq('user_id', userId!)
-      .asyncMap((data) async {
-        final ids = data.map((e) => e['group_id']).toList();
+      .eq('user_id', userId)
+      .order('joined_at', ascending: false)
+      .asyncMap((memberships) async {
+        final ids = memberships.map((e) => e['group_id']).toList();
+
+        if (ids.isEmpty) return [];
+
         final groupsDetails = await SupabaseService.client
             .from('GROUP')
             .select('id, name, description, cover_image_url')
             .filter('id', 'in', ids);
-        return data.map((membership) {
-          final details = groupsDetails.firstWhere(
+
+        return memberships.map((membership) {
+          final group = groupsDetails.firstWhere(
             (g) => g['id'] == membership['group_id'],
+            orElse: () => {},
           );
+
           return {
-            ...membership,
-            'group_name': details['name'],
-            'group_desc': details['description'],
-            'group_img': details['cover_image_url'],
+            'group_id': membership['group_id'],
+            'role': membership['role'],
+            'group_name': group['name'] ?? 'Unknown',
+            'group_desc': group['description'] ?? '',
+            'group_img': group['cover_image_url'] ?? '',
           };
         }).toList();
       });
 }
 
-Future<int> getGroupMembersCount(String groupId) async {
-  try {
-    final countResponse = await SupabaseService.client
-        .from('GROUP_MEMBER')
-        .select('user_id')
-        .eq('group_id', groupId)
-        .count(CountOption.exact);
+Stream<int> streamGroupMembersCount(int groupId) {
+  print("Starting Stream for Group: $groupId");
 
-    return countResponse.count;
+  return SupabaseService.client
+      .from('GROUP_MEMBER')
+      .stream(primaryKey: ['id'])
+      .eq('group_id', groupId)
+      .map((data) {
+        print("Realtime Update Received: ${data.length} rows");
+        return data.length;
+      });
+}
+
+Future<PostgrestMap?> getGroupDetails(int groupId) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP')
+        .select()
+        .eq('id', groupId)
+        .single();
+    return response;
   } catch (e) {
-    return 0;
+    print("Error fetching group details: $e");
+    return null;
   }
 }
 
@@ -51,42 +79,40 @@ Future<void> createNewGroup({
   required String userId,
   File? imageFile,
 }) async {
-  if (userId != null) {
-    try {
-      String? imageUrl;
-      // هنا برفع الصورة للستورج عشان اخد منها الرابط اخزنه في جدول المجموعات
-      if (imageFile != null) {
-        final uploadService = UploadImage();
-        imageUrl = await uploadService.uploadImage(imageFile, 'group_avatars');
-      }
-
-      // دي الصورة الافتراضية لو عايزين نغيرها ارفعوا الصورة علىة الستورج و حطوا الرابط
-      imageUrl ??=
-          'https://pexiueyzeprdnjeluvin.supabase.co/storage/v1/object/public/group_avatars/def_group.jpg';
-
-      // هنا بقا بخزن في جدول المجموعات
-      final groupResponse = await SupabaseService.client
-          .from('GROUP')
-          .insert({
-            'name': name,
-            'description': description,
-            'created_by': userId,
-            'cover_image_url': imageUrl,
-          })
-          .select()
-          .single();
-
-      final groupId = groupResponse['id'];
-
-      // هنا بخزن في البردج المفروض انتم فاهمين كده ف مش هشرح
-      await SupabaseService.client.from('GROUP_MEMBER').insert({
-        'group_id': groupId,
-        'user_id': userId,
-        'role': 'admin',
-      });
-    } catch (e) {
-      print("Error: $e");
+  try {
+    String? imageUrl;
+    // هنا برفع الصورة للستورج عشان اخد منها الرابط اخزنه في جدول المجموعات
+    if (imageFile != null) {
+      final uploadService = StorageService();
+      imageUrl = await uploadService.uploadFile(
+        file: imageFile,
+        bucketName: 'group_avatars',
+      );
     }
+
+    // دي الصورة الافتراضية لو عايزين نغيرها ارفعوا الصورة علىة الستورج و حطوا الرابط
+    imageUrl ??= ImagesConst.defaultGroupAvatar;
+    final groupResponse = await SupabaseService.client
+        .from('GROUP')
+        .insert({
+          'name': name,
+          'description': description,
+          'created_by': userId,
+          'cover_image_url': imageUrl,
+        })
+        .select()
+        .single();
+
+    final groupId = groupResponse['id'];
+
+    // هنا بخزن في البردج المفروض انتم فاهمين كده ف مش هشرح
+    await SupabaseService.client.from('GROUP_MEMBER').insert({
+      'group_id': groupId,
+      'user_id': userId,
+      'role': 'admin',
+    });
+  } catch (e) {
+    print("Error: $e");
   }
 }
 
@@ -131,5 +157,300 @@ Future<String?> joinGroup({
     return null;
   } catch (e) {
     return "Error: $e";
+  }
+}
+
+// معرفه roule المستخدم في الجروب
+Future<String?> getUserRoleInGroup(String userId, String groupId) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('group_id', groupId)
+        .maybeSingle();
+    return response != null ? response['role'] : null;
+  } catch (e) {
+    print("Error fetching user role: $e");
+    return null;
+  }
+}
+
+Future<List<Map<String, dynamic>>> getGroupMembers(String groupId) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .select('''
+          role,
+          profiles:user_id ( id, name, avatar_url )
+        ''')
+        .eq('group_id', groupId);
+
+    return List<Map<String, dynamic>>.from(response);
+  } catch (e) {
+    print("Error fetching members: $e");
+    return [];
+  }
+}
+
+void updateRole(
+  BuildContext context, {
+  required String targetUserId,
+  required String newRole,
+  required int groupId,
+  required VoidCallback onRefresh,
+  required String userId,
+  required String userRole,
+}) async {
+  try {
+    await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .update({'role': newRole})
+        .eq('group_id', groupId)
+        .eq('user_id', targetUserId);
+
+    Navigator.pop(context);
+    onRefresh();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'Role updated successfully!',
+        icon: Icons.check,
+        color: AppColors.greenColor,
+      ),
+    );
+
+    await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .update({'role': userRole})
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+  } catch (e) {
+    print("Error updating role: $e");
+  }
+}
+
+void removeFromGroup(
+  BuildContext context, {
+  required String targetUserId,
+  required int groupId,
+  required VoidCallback onRefresh,
+  required String userId,
+  required String userRole,
+}) async {
+  try {
+    await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .delete()
+        .eq('group_id', groupId)
+        .eq('user_id', targetUserId);
+
+    onRefresh();
+
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'Member removed successfully!',
+        icon: Icons.check,
+        color: AppColors.greenColor,
+      ),
+    );
+
+    await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .update({'role': userRole})
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+  } catch (e) {
+    print("Error removing member: $e");
+  }
+}
+
+Future<bool> updateGroupDetails({
+  required int groupId,
+  required String name,
+  required String description,
+  String? imageUrl,
+  required String userId,
+  required String userRole,
+}) async {
+  try {
+    final Map<String, dynamic> updateData = {
+      'name': name,
+      'description': description,
+    };
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      updateData['cover_image_url'] = imageUrl;
+    }
+
+    final response = await SupabaseService.client
+        .from('GROUP')
+        .update(updateData)
+        .eq('id', groupId)
+        .select();
+
+    await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .update({'role': userRole})
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+
+    return response.isNotEmpty;
+  } catch (e) {
+    print("Error updating group details: $e");
+    return false;
+  }
+}
+
+Future<void> deleteGroup(
+  BuildContext context, {
+  required int groupId,
+  required String userId,
+}) async {
+  try {
+    final response = await SupabaseService.client
+        .from('GROUP')
+        .delete()
+        .eq('id', groupId)
+        .select();
+
+    print("Delete Final Check: $response");
+
+    if (!context.mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => GroupsPage()),
+      (route) => false,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'Group deleted completely!',
+        icon: Icons.check,
+        color: AppColors.greenColor,
+      ),
+    );
+  } catch (e) {
+    print("Delete Error: $e");
+  }
+}
+
+Future<void> leaveGroup(
+  BuildContext context, {
+  required String userId,
+  required int groupId,
+  required int membersCount,
+  required String userRole,
+}) async {
+  try {
+    if (membersCount <= 1) {
+      await deleteGroup(context, groupId: groupId, userId: userId);
+    } else {
+      await SupabaseService.client
+          .from('GROUP_MEMBER')
+          .delete()
+          .eq('user_id', userId)
+          .eq('group_id', groupId);
+    }
+
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'You have left the group.',
+        color: AppColors.greenColor,
+        icon: Icons.check,
+      ),
+    );
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const GroupsPage()),
+      (route) => false,
+    );
+  } catch (e) {
+    print("Error: $e");
+  }
+}
+
+Future<List<Map<String, dynamic>>> getRegisteredContacts() async {
+  try {
+    final status = await FlutterContacts.permissions.request(
+      PermissionType.read,
+    );
+
+    if (status == PermissionStatus.granted) {
+      final List<Contact> contacts = await FlutterContacts.getAll(
+        properties: {ContactProperty.phone},
+      );
+
+      final List<String> phoneNumbers = contacts
+          .expand((c) => c.phones)
+          .map((p) {
+            String cleaned = p.number.replaceAll(RegExp(r'[^\d]'), '');
+            cleaned = cleaned.startsWith('2') ? cleaned.substring(1) : cleaned;
+            return cleaned;
+          })
+          .where((number) => number.isNotEmpty)
+          .toList();
+
+      if (phoneNumbers.isEmpty) return [];
+
+      final response = await SupabaseService.client
+          .from('users')
+          .select('id, name, avatar_url, phone')
+          .filter('phone', 'in', phoneNumbers);
+      print("Contacts Matching Response: $response");
+      return List<Map<String, dynamic>>.from(response);
+    }
+    return [];
+  } catch (e) {
+    print("Contacts Matching Error: $e");
+    return [];
+  }
+}
+
+Future<void> addMember(BuildContext context, int groupId, String userId) async {
+  try {
+    //check if user is already a member
+    final existingMember = await SupabaseService.client
+        .from('GROUP_MEMBER')
+        .select()
+        .eq('group_id', groupId)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (existingMember != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        CustomSnackBar(
+          title: 'Info',
+          message: 'User is already a member of the group.',
+          icon: Icons.info,
+          color: AppColors.yellowColor,
+        ),
+      );
+      return;
+    }
+
+    await SupabaseService.client.from('GROUP_MEMBER').insert({
+      'group_id': groupId,
+      'user_id': userId,
+      'role': 'member',
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      CustomSnackBar(
+        title: 'Success',
+        message: 'Member added successfully!',
+        icon: Icons.check,
+        color: AppColors.greenColor,
+      ),
+    );
+  } catch (e) {
+    print("Error adding member: $e");
   }
 }
