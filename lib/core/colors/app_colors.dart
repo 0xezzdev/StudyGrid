@@ -13,6 +13,7 @@ class AppColors {
   //text colors
   static Color mainTextColor = Color(0xffF1F5F9);
   static Color subTextColor = Color(0xff94A3B8);
+  static Color dateColor = Color.fromARGB(158, 216, 222, 232);
 
   //messages colors
   static Color sentMessageMainColor = Color(0xff944ae4);
