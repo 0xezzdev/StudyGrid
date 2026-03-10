@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      extendBody: true,
+      extendBody: false,
       body: IndexedStack(index: _currentIndex, children: _pages),
 
       bottomNavigationBar: CustomBottomNavBar(

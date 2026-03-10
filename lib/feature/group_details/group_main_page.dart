@@ -5,6 +5,7 @@ import 'package:study_grid/core/services/supabase_service.dart';
 import 'package:study_grid/feature/chat_page.dart/chat_page.dart';
 import 'package:study_grid/feature/file_page.dart/files_page.dart';
 import 'package:study_grid/feature/group_details/screens/more_tap/more_tap_screen.dart';
+import 'package:study_grid/feature/group_todo/features/group_todo.dart';
 
 class GroupMainPage extends StatefulWidget {
   final int groupId;
@@ -161,12 +162,7 @@ class _GroupMainPageState extends State<GroupMainPage> {
                               usserRole: userRole,
                             ),
 
-                            const Center(
-                              child: Text(
-                                "To-Do Screen Content",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                            GroupToDo(groupId: widget.groupId, currentUserRole: userRole),
 
                             MoreTabScreen(
                               userRole: userRole,

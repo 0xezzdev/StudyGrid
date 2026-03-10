@@ -10,10 +10,11 @@ class AdminEditing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
+      color: AppColors.backgroundColor,
       icon: Icon(Icons.more_vert, color: AppColors.subTextColor),
       itemBuilder: (context) => [
-        PopupMenuItem(value: 'edit', child: Text('Edit')),
-        PopupMenuItem(value: 'delete', child: Text('Delete')),
+        PopupMenuItem(value: 'edit', child: Text('Edit', style: TextStyle(color: AppColors.subTextColor))),
+        PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: AppColors.subTextColor))),
       ],
       onSelected: (String value) {
         if (value == 'edit') onEdit();
