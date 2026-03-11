@@ -112,7 +112,7 @@ class _AlertPageState extends State<AlertPage> {
                           .update({'is_read': true})
                           .match({
                             'id': item['id'],
-                          }); // استخدام match أضمن أحياناً من eq في الـ streams
+                          });
                     }
 
                     // الـ Navigation
@@ -150,7 +150,7 @@ class _AlertPageState extends State<AlertPage> {
         color = Colors.grey;
     }
     return CircleAvatar(
-      backgroundColor: color.withOpacity(0.1),
+      backgroundColor: color.withValues(alpha: 0.1),
       child: Icon(iconData, color: color, size: 20),
     );
   }
