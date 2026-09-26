@@ -1,19 +1,25 @@
 class ClassFile {
-  final String id;
+  final int id;
+  final int groupId;
   final String name;
   final double sizeMB;
-  final DateTime uploadedAt;
-  final String uploaderName;
+  final String uploadedBy;
+  final DateTime createdAt;
+  final String folderId;
+  final String scope;
   final String type;
   final String? url;
   final String? storagePath;
 
   const ClassFile({
     required this.id,
+    required this.groupId,
     required this.name,
     required this.sizeMB,
-    required this.uploadedAt,
-    required this.uploaderName,
+    required this.uploadedBy,
+    required this.createdAt,
+    required this.folderId,
+    required this.scope,
     required this.type,
     this.url,
     this.storagePath,
