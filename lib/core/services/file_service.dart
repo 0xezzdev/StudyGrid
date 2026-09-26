@@ -11,7 +11,9 @@ class FileService {
   // ── Is current user admin of this group ───────────────────────────────────
   Future<bool> isAdmin(int groupId) async {
     try {
-      debugPrint(' Checking admin for groupId: $groupId, userId: $currentUserId');
+      debugPrint(
+        ' Checking admin for groupId: $groupId, userId: $currentUserId',
+      );
 
       final res = await _client
           .from('GROUP')
@@ -20,7 +22,9 @@ class FileService {
           .single();
 
       debugPrint(' GROUP row: $res');
-      debugPrint(' created_by: ${res['created_by']} == currentUser: $currentUserId → ${res['created_by'] == currentUserId}');
+      debugPrint(
+        ' created_by: ${res['created_by']} == currentUser: $currentUserId → ${res['created_by'] == currentUserId}',
+      );
 
       return res['created_by'] == currentUserId;
     } catch (e) {
@@ -45,14 +49,14 @@ class FileService {
       return res.map((row) {
         final uploader = row['users'] as Map<String, dynamic>?;
         return ClassFile(
-          id:           row['id'].toString(),
-          name:         row['name'],
-          sizeMB:       (row['size_mb'] as num).toDouble(),
-          uploadedAt:   DateTime.parse(row['created_at']),
-          uploaderName: uploader?['name'] ?? 'Unknown',
-          type:         row['type'],
-          url:          row['url'],
-          storagePath:  row['storage_path'],
+          id: row['id'],
+          name: row['name'],
+          sizeMB: (row['size_mb'] as num).toDouble(),
+          createdAt: DateTime.parse(row['created_at']),
+          scope: uploader?['name'] ?? 'Unknown',
+          type: row['type'],
+          url: row['url'],
+          storagePath: row['storage_path'],
         );
       }).toList();
     } catch (e) {
@@ -62,12 +66,17 @@ class FileService {
   }
 
   // ── Upload file ───────────────────────────────────────────────────────────
-  Future<void> uploadFile(int groupId, File file, String fileName, String ext) async {
+  Future<void> uploadFile(
+    int groupId,
+    File file,
+    String fileName,
+    String ext,
+  ) async {
     try {
       // Sanitize filename — remove non-ASCII, replace spaces with underscores
       final sanitized = fileName
-          .replaceAll(RegExp(r'[^\x00-\x7F]'), '')   // remove Arabic/non-ASCII
-          .replaceAll(RegExp(r'\s+'), '_')             // spaces → underscores
+          .replaceAll(RegExp(r'[^\x00-\x7F]'), '') // remove Arabic/non-ASCII
+          .replaceAll(RegExp(r'\s+'), '_') // spaces → underscores
           .replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '') // remove special chars
           .trim();
 
@@ -76,29 +85,32 @@ class FileService {
           ? '${DateTime.now().millisecondsSinceEpoch}.$ext'
           : sanitized;
 
-      final path = '$groupId/${DateTime.now().millisecondsSinceEpoch}_$safeName';
+      final path =
+          '$groupId/${DateTime.now().millisecondsSinceEpoch}_$safeName';
       final bytes = await file.readAsBytes();
 
       debugPrint(' Uploading as: $path');
 
-      await _client.storage.from('group_files').uploadBinary(
-        path,
-        bytes,
-        fileOptions: FileOptions(contentType: _mimeType(ext)),
-      );
+      await _client.storage
+          .from('group_files')
+          .uploadBinary(
+            path,
+            bytes,
+            fileOptions: FileOptions(contentType: _mimeType(ext)),
+          );
 
       final url = _client.storage.from('group_files').getPublicUrl(path);
       final sizeMB = bytes.length / (1024 * 1024);
 
       // Store original Arabic name in DB for display, safe path for storage
       await _client.from('group_files').insert({
-        'group_id':     groupId,
-        'name':         fileName,   // original name shown to user
-        'size_mb':      sizeMB,
-        'type':         ext,
-        'url':          url,
-        'storage_path': path,       // sanitized path used in storage
-        'uploaded_by':  currentUserId,
+        'group_id': groupId,
+        'name': fileName, // original name shown to user
+        'size_mb': sizeMB,
+        'type': ext,
+        'url': url,
+        'storage_path': path, // sanitized path used in storage
+        'uploaded_by': currentUserId,
       });
 
       debugPrint('File uploaded: $fileName');
@@ -120,12 +132,14 @@ class FileService {
   }
 
   String _mimeType(String ext) => switch (ext.toLowerCase()) {
-    'pdf'  => 'application/pdf',
-    'doc'  => 'application/msword',
-    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'ppt'  => 'application/vnd.ms-powerpoint',
-    'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    _      => 'application/octet-stream',
+    'pdf' => 'application/pdf',
+    'doc' => 'application/msword',
+    'docx' =>
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'ppt' => 'application/vnd.ms-powerpoint',
+    'pptx' =>
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    _ => 'application/octet-stream',
   };
   Stream<List<ClassFile>> filesStream(int groupId) async* {
     while (true) {
